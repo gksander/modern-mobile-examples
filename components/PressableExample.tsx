@@ -66,6 +66,9 @@ type MyTouchableOpacityProps = Omit<PressableProps, 'style'> & {
   style?: StyleProp<ViewStyle>;
 };
 
+/**
+ * Basic version
+ */
 const MyTouchableOpacity: React.FC<MyTouchableOpacityProps> = ({
   style,
   ...rest
@@ -81,6 +84,9 @@ const MyTouchableOpacity: React.FC<MyTouchableOpacityProps> = ({
   );
 };
 
+/**
+ * Animated with RN Animated API
+ */
 const MyTouchableOpacityAnimated: React.FC<MyTouchableOpacityProps> = ({
   style,
   ...rest
@@ -96,20 +102,20 @@ const MyTouchableOpacityAnimated: React.FC<MyTouchableOpacityProps> = ({
   return (
     <AnimatedPressable
       onPressIn={evt => {
-        rest?.onPressIn?.(evt);
         Animated.timing(pressInProgress, {
           toValue: 1,
           useNativeDriver: true,
           duration: 150,
         }).start();
+        rest?.onPressIn?.(evt);
       }}
       onPressOut={evt => {
-        rest?.onPressOut?.(evt);
         Animated.timing(pressInProgress, {
           toValue: 0,
           useNativeDriver: true,
           duration: 150,
         }).start();
+        rest?.onPressOut?.(evt);
       }}
       style={[...(Array.isArray(style) ? style : [style]), { opacity }]}
       {...rest}
@@ -119,6 +125,9 @@ const MyTouchableOpacityAnimated: React.FC<MyTouchableOpacityProps> = ({
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+/**
+ * Animated with Reanimated 2
+ */
 const MyTouchableOpacityReanimated: React.FC<MyTouchableOpacityProps> = ({
   style,
   ...rest
@@ -139,12 +148,12 @@ const MyTouchableOpacityReanimated: React.FC<MyTouchableOpacityProps> = ({
   return (
     <ReanimatedPressable
       onPressIn={evt => {
-        rest?.onPressIn?.(evt);
         pressInProgress.value = withTiming(1, { duration: 150 });
+        rest?.onPressIn?.(evt);
       }}
       onPressOut={evt => {
-        rest?.onPressOut?.(evt);
         pressInProgress.value = withTiming(0, { duration: 150 });
+        rest?.onPressOut?.(evt);
       }}
       style={[...(Array.isArray(style) ? style : [style]), animatedStyle]}
       {...rest}
