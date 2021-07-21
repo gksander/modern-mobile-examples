@@ -1,6 +1,6 @@
 import * as React from 'react';
-import FastImage, { FastImageProps } from 'react-native-fast-image';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import FastImage, { FastImageProps } from 'react-native-fast-image';
 import Reanimated, {
   useAnimatedStyle,
   withTiming,
@@ -9,23 +9,23 @@ import Reanimated, {
 type BetterImageProps = FastImageProps;
 
 export const BetterImage: React.FC<BetterImageProps> = ({
-  style,
   onLoad,
+  style,
   ...rest
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
-  const imageStyle = useAnimatedStyle(() => {
+  const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(isLoaded ? 1 : 0, { duration: 300 }),
-      transform: [{ scale: withTiming(isLoaded ? 1 : 0.8, { duration: 300 }) }],
+      transform: [{ scale: withTiming(isLoaded ? 1 : 0.7, { duration: 200 }) }],
     };
   });
 
   return (
     <View>
       <AnimatedFastImage
-        style={[imageStyle, style]}
+        style={[...(Array.isArray(style) ? style : [style]), animatedStyle]}
         onLoad={evt => {
           onLoad?.(evt);
           setIsLoaded(true);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   FlatList,
+  Image,
   ListRenderItem,
   SafeAreaView,
   Text,
@@ -14,7 +15,6 @@ export const BetterImageExample: React.FC = () => {
   const insets = useSafeAreaInsets();
   const [data, setData] = React.useState(generateRandomIds());
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-
   const onRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => {
