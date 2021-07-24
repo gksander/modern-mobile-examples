@@ -22,25 +22,28 @@ const LaptopImg = require('../img/laptop.jpeg');
 
 export const OverscrollExample: React.FC = () => {
   const insets = useSafeAreaInsets();
+
   const scrollY = useSharedValue(0);
   const scrollYInternal = React.useRef(0);
+  const updateInternalScrollY = (y: number) => (scrollYInternal.current = y);
+
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const scrollRef = React.useRef<ScrollView>(null);
-  const spinnerProgress = useSharedValue(0);
-
-  const updateInternalScrollY = (y: number) => (scrollYInternal.current = y);
+  const spinnerReloadProgress = useSharedValue(0);
 
   const onScroll = useAnimatedScrollHandler(evt => {
     scrollY.value = evt.contentOffset.y;
     runOnJS(updateInternalScrollY)(evt.contentOffset.y);
   });
 
+  // Header image: pin top to overscroll top.
   const animatedHeaderImgStyle = useAnimatedStyle(() => {
     return {
       top: clamp(scrollY.value, -1000, 0),
     };
   });
 
+  // Animate in the header background
   const animatedHeaderBackground = useAnimatedStyle(() => {
     return {
       opacity: interpolate(
@@ -52,6 +55,8 @@ export const OverscrollExample: React.FC = () => {
     };
   });
 
+  // Header buttons: animate color. Duplicate because each element needs its own
+  //   style object.
   const animatedHeaderButtonTextStyle = useAnimatedStyle(() => {
     return {
       color: interpolateColor(scrollY.value, [0, 30], [white, purple]),
@@ -63,6 +68,7 @@ export const OverscrollExample: React.FC = () => {
     };
   });
 
+  // Header title... Fade it in, add a little translateY too.
   const animatedHeaderTitleStyle = useAnimatedStyle(() => {
     return {
       opacity: interpolate(
@@ -84,6 +90,7 @@ export const OverscrollExample: React.FC = () => {
     };
   });
 
+  // To make spinner spin, we animate the strokeDashoffset.
   const animSpinnerProps = useAnimatedProps(() => {
     return {
       strokeDasharray: SPINNER_DASH_MAX,
@@ -93,9 +100,10 @@ export const OverscrollExample: React.FC = () => {
           [PTR_THRESHOLD, 0],
           [0, SPINNER_DASH_MAX],
           Extrapolate.CLAMP,
-        ) + spinnerProgress.value,
+        ) + spinnerReloadProgress.value,
     };
   });
+  // Fade spinner in based on overscroll.
   const animSpinnerStyle = useAnimatedStyle(() => {
     return {
       opacity: interpolate(
@@ -108,6 +116,7 @@ export const OverscrollExample: React.FC = () => {
   });
 
   React.useEffect(() => {
+    // Dummy logic: if we start refreshing, set a timeout to turn it off.
     if (isRefreshing) {
       let isSubbed = true;
 
@@ -116,29 +125,33 @@ export const OverscrollExample: React.FC = () => {
       return () => {
         isSubbed = false;
       };
-    } else {
+    }
+    // When fake refresh is turned off, reset some values and scroll
+    //  the scrollview back into place.
+    else {
       scrollRef?.current?.scrollTo({
         y: isRefreshing ? PTR_THRESHOLD : 0,
         animated: true,
       });
-      cancelAnimation(spinnerProgress);
-      spinnerProgress.value = withTiming(0, { duration: 300 });
+      cancelAnimation(spinnerReloadProgress);
+      spinnerReloadProgress.value = withTiming(0, { duration: 300 });
     }
-  }, [isRefreshing, spinnerProgress]);
+  }, [isRefreshing, spinnerReloadProgress]);
 
-  const start = (shouldReset: boolean) => {
+  // Spinner progress, gets called on drag end - and recursively to create loop effect.
+  const startSpinnerReloadProgress = (shouldReset: boolean) => {
     if (shouldReset) {
-      spinnerProgress.value = SPINNER_DASH_MAX;
+      spinnerReloadProgress.value = SPINNER_DASH_MAX;
     }
 
-    spinnerProgress.value = withTiming(
+    spinnerReloadProgress.value = withTiming(
       shouldReset ? 0 : -SPINNER_DASH_MAX,
       {
         duration: 1000,
       },
       isFinished => {
         if (isFinished) {
-          runOnJS(start)(!shouldReset);
+          runOnJS(startSpinnerReloadProgress)(!shouldReset);
         }
       },
     );
@@ -160,7 +173,7 @@ export const OverscrollExample: React.FC = () => {
                 y: PTR_THRESHOLD,
                 animated: true,
               });
-              start(false);
+              startSpinnerReloadProgress(false);
             }
           }}
           scrollToOverflowEnabled>
