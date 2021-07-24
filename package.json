@@ -10,11 +10,14 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.11",
     "react": "17.0.1",
     "react-native": "0.64.1",
     "react-native-fast-image": "^8.3.6",
     "react-native-reanimated": "^2.2.0",
+    "react-native-redash": "^16.1.1",
     "react-native-safe-area-context": "^3.2.0",
+    "react-native-svg": "^12.1.1",
     "react-native-turbo-styles": "^0.1.0"
   },
   "devDependencies": {
