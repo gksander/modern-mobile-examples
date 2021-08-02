@@ -13,19 +13,11 @@ import {
 import Animated, {
   AnimatedLayout,
   Easing,
-  FadeIn,
-  FadeOut,
-  Layout,
-  FadeInLeft,
-  FadeOutLeft,
-  FadeInRight,
-  FadeOutRight,
-  SlideInRight,
-  SlideOutRight,
-  FadeInUp,
-  FadeOutUp,
   FadeInDown,
+  FadeInLeft,
   FadeOutDown,
+  FadeOutLeft,
+  Layout,
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Feather';
 import { constraints, ts } from '../utils/styles';
@@ -161,5 +153,4 @@ const renderItem: ListRenderItem<number> = ({ item }) => {
 };
 const keyExtractor = (item: number) => String(item);
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
