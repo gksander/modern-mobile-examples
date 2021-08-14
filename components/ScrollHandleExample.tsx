@@ -88,6 +88,7 @@ export const ScrollHandleExample: React.FC = () => {
       height: 2 * HANDLE_RADIUS,
       borderRadius: HANDLE_RADIUS,
       opacity: withSpring(isHandleVisible ? 1 : 0, { mass: 0.3 }),
+      shadowOpacity: withSpring(isDraggingHandle.value ? 0 : 0.5),
       transform: [
         {
           translateY: isDraggingHandle.value
@@ -100,9 +101,6 @@ export const ScrollHandleExample: React.FC = () => {
             { mass: 0.3 },
           ),
         },
-        // {
-        //   scale: withSpring(isDraggingHandle.value ? 1.3 : 1),
-        // },
       ],
     };
   });
@@ -136,7 +134,7 @@ export const ScrollHandleExample: React.FC = () => {
           }}
           showsVerticalScrollIndicator={false}
         />
-        <PanGestureHandler onGestureEvent={onHandlePan}>
+        <PanGestureHandler onGestureEvent={onHandlePan} minDeltaY={1}>
           <Reanimated.View
             style={[
               ts(
@@ -144,9 +142,9 @@ export const ScrollHandleExample: React.FC = () => {
                 'right:0',
                 'top:0',
                 'bg:gray-500',
-                'rounded:full',
                 'justify:center',
                 'items:center',
+                'shadow:base',
               ),
               animatedHandleStyle,
             ]}>
